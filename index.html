@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frutas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="CSS/estilos.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,900&family=Merriweather+Sans&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="miDiv" class="desvanecer">
+
+        <div class="seccion1">
+          
+            <video id="video" playsinline autoplay class="camara"></video>
+            <canvas id="canvas" class="camara"></canvas> 
+            <button class="BotonC" id="cambiar-camara" onclick="cambiarCamara();">Cambiar cámara</button>
+        </div>
+
+        <div class="seccion2">
+            <div class="text-container">
+                <div id="resultado"></div>
+                <div id="categoria"></div>
+                <div id="oracion"></div>
+            </div>
+        </div>
+
+      </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.7.0/dist/tf.min.js"></script>
+    <script type="text/javascript">
+      
+      var tiempoPrediccion = 3000; // 3 segundos (3000 milisegundos)
+      var tamano = 400;
+      var video = document.getElementById("video");
+      var canvas = document.getElementById("canvas");
+      var ctx = canvas.getContext("2d");
+      var currentStream = null;
+      var facingMode = "user";
+
+      var modelo = null;
+
+      var labels = [
+        'Ajo','Berenejena', 'Camote','Cebolla','Coliflor','Espinaca', 'Granada',
+          'Guisantes', 'Habas de soja', 'Jalapeño', 'Jengibre', 'Kiwi', 'Lechuga', 'Limon',
+          'Maiz', 'Maiz dulce', 'Mango', 'Manzana', 'Nabo',
+          'Naranja', 'Papa', 'Pepino', 'Pera', 'Pimenton', 'Pimiento', 'Pimiento picante',
+          'Piña', 'Platano', 'Rabano', 'Remolacha', 'Repollo', 'Sandia',
+          'Tomate', 'Uvas', 'Zanahoria'
+      ];
+
+      const categorias = {
+        'Ajo': { categoria: 'Verdura', oracion: 'Garlic is a small vegetable that makes food taste yummy.' },
+        'Berenjena': { categoria: 'Verdura', oracion: 'Eggplant is a purple vegetable that looks like a big grape.' },
+        'Camote': { categoria: 'Verdura', oracion: 'Sweet potato is an orange vegetable that tastes sweet like candy.' },
+        'Cebolla': { categoria: 'Verdura', oracion: 'Onion is a round vegetable that makes you cry when you cut it.' },
+        'Coliflor': { categoria: 'Verdura', oracion: 'Cauliflower is a white vegetable that looks like a fluffy cloud.' },
+        'Espinaca': { categoria: 'Verdura', oracion: 'Spinach is a green leafy vegetable that makes you strong like Popeye.' },
+        'Granada': { categoria: 'Fruta', oracion: 'Pomegranate is a fruit with juicy red seeds that you can eat like a snack.' },
+        'Guisantes': { categoria: 'Verdura', oracion: 'Peas are small green vegetables that you can pop out of their pods.' },
+        'Habas de soja': { categoria: 'Verdura', oracion: 'Soybeans are tiny beans that can be made into milk or tofu.' },
+        'Jalapeño': { categoria: 'Verdura', oracion: 'Jalapeno is a small spicy pepper that can make your mouth feel hot.' },
+        'Jengibre': { categoria: 'Verdura', oracion: 'Ginger is a special root that adds flavor to cookies and gingerbread.' },
+        'Kiwi': { categoria: 'Fruta', oracion: 'Kiwi is a brown fruit with green insides that tastes sweet and tangy.' },
+        'Lechuga': { categoria: 'Verdura', oracion: 'Lettuce is a leafy vegetable that makes a crunchy and healthy salad.' },
+        'Limon': { categoria: 'Fruta', oracion: 'Lemon is a sour fruit that you can squeeze to make lemonade.' },
+        'Maiz': { categoria: 'Verdura', oracion: 'Corn is a yellow vegetable that can be popped into popcorn or eaten on the cob.' },
+        'Maiz dulce': { categoria: 'Verdura', oracion: 'Sweet corn is a special kind of corn that tastes like candy.' },
+        'Mango': { categoria: 'Fruta', oracion: 'Mango is a juicy fruit that tastes like a tropical vacation.' },
+        'Manzana': { categoria: 'Fruta', oracion: 'Apple is a crispy fruit that comes in different colors and tastes delicious.' },
+        'Nabo': { categoria: 'Verdura', oracion: 'Turnip is a round vegetable with a peppery taste.' },
+        'Naranja': { categoria: 'Fruta', oracion: 'Orange is a round fruit that is bright and citrusy.' },
+        'Papa': { categoria: 'Verdura', oracion: 'Potato is a versatile vegetable that can be boiled, mashed, or fried into french fries.' },
+        'Pepino': { categoria: 'Verdura', oracion: 'Cucumber is a cool and refreshing vegetable that you can eat in salads or as a snack.' },
+        'Pera': { categoria: 'Fruta', oracion: 'Pear is a juicy fruit that is shaped like a teardrop and tastes sweet and refreshing.' },
+        'Piña': { categoria: 'Fruta', oracion: 'Pineapple is a tropical fruit that is juicy and has a sweet and tangy flavor.' },
+        'Platano': { categoria: 'Fruta', oracion: 'Banana is a long fruit that is yellow and tastes creamy and sweet.' },
+        'Tomate': { categoria: 'Fruta', oracion: 'Tomato is a red fruit that is juicy and used in many dishes like salads and sandwiches.' },
+        'Uvas': { categoria: 'Fruta', oracion: 'Grapes are small fruits that come in bunches and can be green, red, or purple.' },
+        'Zanahoria': { categoria: 'Verdura', oracion: 'Carrot is a crunchy vegetable that is orange and good for your eyes.' },
+        'Pimentón': { categoria: 'Verdura', oracion: 'Paprika is a red spice made from dried and ground bell peppers. It adds a smoky and sweet flavor to dishes.' },
+        'Pimiento': { categoria: 'Verdura', oracion: 'Bell pepper is a crunchy vegetable that comes in different colors like red, green, and yellow.' },
+        'Pimiento picante': { categoria: 'Verdura', oracion: 'Chili pepper is a spicy vegetable that can add heat and flavor to various dishes.' },
+        'Rábano': { categoria: 'Verdura', oracion: 'Radish is a small root vegetable that has a spicy flavor.' },
+        'Remolacha': { categoria: 'Verdura', oracion: 'Beetroot is a purple vegetable that has a sweet and earthy taste.' },
+        'Repollo': { categoria: 'Verdura', oracion: 'Cabbage is a leafy vegetable that is often used in salads or coleslaw.' },
+        'Sandía': { categoria: 'Fruta', oracion: 'Watermelon is a juicy fruit that is perfect for staying hydrated in the summer.' }
+    };
+
+      (async () => {
+        console.log("Cargando modelo...");
+        modelo = await tf.loadLayersModel("model.json");
+        console.log("Modelo cargado");
+      })();
+
+      window.onload = function() {
+        mostrarCamara();
+      }
+
+      function mostrarCamara() {
+        var opciones = {
+          audio: false,
+          video: {
+            width: tamano, height: tamano
+          }
+        }
+
+        if (navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia(opciones)
+            .then(function(stream) {
+              currentStream = stream;
+              video.srcObject = currentStream;
+              
+            })
+            .catch(function(err) {
+              alert("No se pudo utilizar la cámara :(");
+              console.log(err);
+              alert(err);
+            })
+        } else {
+          alert("No existe la función getUserMedia");
+        }
+        video.addEventListener('loadeddata', function() {
+            predecir();
+        });
+      }
+      function cambiarCamara() {
+        if (currentStream) {
+          currentStream.getTracks().forEach(track => {
+            track.stop();
+          });
+        }
+
+        facingMode = facingMode == "user" ? "environment" : "user";
+
+        var opciones = {
+          audio: false,
+          video: {
+            facingMode: facingMode, width: tamano, height: tamano
+          }
+        };
+
+
+        navigator.mediaDevices.getUserMedia(opciones)
+          .then(function(stream) {
+            currentStream = stream;
+            video.srcObject = currentStream;
+          })
+          .catch(function(err) {
+            console.log("Oops, hubo un error", err);
+          })
+      }
+
+      function procesarCamara() {
+        ctx.drawImage(video, 0, 0, tamano, tamano, 0, 0, tamano, tamano);
+        setTimeout(procesarCamara, 20);
+      }
+
+      function predecir() {
+        const tensorImg = tf.browser.fromPixels(video).toFloat();
+        const resizedImg = tf.image.resizeBilinear(tensorImg, [224, 224]);
+        const expandedImg = resizedImg.expandDims();
+        const normalizedImg = expandedImg.div(255.0);
+
+        const prediction = modelo.predict(normalizedImg);
+        const predictionData = prediction.dataSync();
+        const predictedClassIndex = tf.argMax(predictionData).dataSync()[0];
+        const predictedClass = labels[predictedClassIndex];
+
+        const resultadoElement = document.getElementById('resultado');
+        const categoriaElement = document.getElementById('categoria');
+        const oracionElement = document.getElementById('oracion');
+        
+        if (predictedClass in categorias) {
+            resultadoElement.innerText = predictedClass;
+            categoriaElement.innerText = categorias[predictedClass].categoria
+            oracionElement.innerText = categorias[predictedClass].oracion;
+        } else {
+            resultadoElement.innerText = "No se cual es esa fruta o verdura, trata de enfocar mejor la camara";
+        }
+
+        
+          requestAnimationFrame(predecir);
+        
+    }
+
+      // Ejemplo de uso:
+      (async () => {
+        console.log('Cargando modelo...');
+        modelo = await tf.loadLayersModel('model.json');
+        console.log('Modelo cargado');
+        
+        await mostrarCamara();
+
+        predecir();
+      })();
+
+    </script>
+</body>
+</html>
