@@ -1,86 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Monomaniac+One&display=swap');
+
 body {
+    background: linear-gradient(to right, #F2B93C 60%, #ECF0F0 40%);
+}
+
+#mid {
     display: flex;
-    align-items: center;
     justify-content: center;
-    height: 100vh;
-    margin: 0;
-    background-image: url('Imagen\ Fondo.jpg');
-    background-size: cover;
-}
-
-.desvanecer {
-    width: 100%;
-    max-width: 1350px;
-    height: 600px;
-    padding: 2rem 3rem;
-    border: 3px solid #fff;
-    box-shadow: 0 0 25px #222;
-    backdrop-filter: blur(10px);
-    display: flex;
-    flex-direction: column;
-}
-.seccion1 {
-    flex: 2;
     align-items: center;
-    display: flex;
-    padding-left: 450px;
-    margin-bottom: 10px;
-
+    height: 85vh;
+    width: 200vh;
+    background: linear-gradient(to right, #F2B93C 61%, #ECF0F0 30%);
 }
 
-.seccion2 {
-    background-color:white;
-    flex: 1;
-    border-radius: 20px;
-    font-size: 30;
-    align-items: center;
+#contenido {
+    display: flex;
     justify-content: center;
-    padding: 30px;
-    text-align: center;
-    
-}
-.text-container {
-    margin-top: 20px;
+    align-items: center;
 }
 
-.seccion1 video {
-    border-radius: 50px;
-    width: 80%;
-    height: auto;
-    max-width: 350px; /* Ajusta el ancho máximo del video según tus necesidades */
-    max-height: 350px; /* Ajusta la altura del video al 100% del contenedor */
+#camera{
     
+    justify-content: center;
+    align-items: center;
 }
+
+#video{
+    width: 70vh;
+    padding: 4vh;
+    margin-top: 25vh;
+    border-radius: 5%;
+}
+
 #resultado{
-    font-family: fantasy;
-    font-size: 100;
-    color: black;
+    font-family: 'Monomaniac One', sans-serif;
+    font-size: 18vh;
+    color: white;
     margin-bottom: 10px;
     font-weight: bold;
 }
 #oracion{
     font-family: fantasy;
     font-size: 70;
-    color: rgb(0, 58, 184);
+    color: white;
     margin-bottom: 10px;
     
 }
 #categoria{
     font-family: fantasy;
-    font-size: 70;
-    color: red;
-    margin-bottom: 10px;
+    font-size: 4vh;
+    color: #F2B93C;
+    background-color: #ECF0F0;
+    width: auto;
+    text-align: center;
+
 }
-.BotonC {
-    border-radius: 15px;
-    background-color: #488700;
-    border-color: none;
-    color: black;
-    position: absolute;
-    top: 10px;
-    right: 10px;
+
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px;
 }
-  
-.BotonC:hover {
-    background-color: #e57373;
+
+.title{
+    display: flex;
 }
+
+.icon{
+    font-size: 6vh;
+}
+
+.titulo{
+    margin-left: 2vh;
+}
+

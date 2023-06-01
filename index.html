@@ -9,31 +9,39 @@
     <link rel="stylesheet" href="CSS/estilos.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,900&family=Merriweather+Sans&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="miDiv" class="desvanecer">
-
-        <div class="seccion1">
-          
-            <video id="video" playsinline autoplay class="camara"></video>
-            <canvas id="canvas" class="camara"></canvas> 
-            <button class="BotonC" id="cambiar-camara" onclick="cambiarCamara();">Cambiar cámara</button>
-        </div>
-
-        <div class="seccion2">
-            <div class="text-container">
-                <div id="resultado"></div>
-                <div id="categoria"></div>
-                <div id="oracion"></div>
-            </div>
-        </div>
-
+    <div class="container" id="header">
+      <div class="title">
+        <div class="icon"><i class="fa-regular fa-lemon"></i></div>
+        <h1 class="titulo">What fruit it is?</h1>
       </div>
+      <div>
+        <button type="button" class="btn btn-outline-warning" id="cambiar-camara" onclick="cambiarCamara();">Cambiar cámara</button>
+      </div>
+    </div>
+    <div class="container  rounded shadow-lg p-3 mb-5 bg-white rounded" id="mid">
+      <div class="row" id="contenido"> 
+        <div class="col-sm-5 p-3 m-3">
+          <div id="categoria"></div>
+          <div id="resultado"></div>
+          <div id="oracion"></div>
+        </div>
+        <div class="col" id="camera">
+          <video  id="video" playsinline autoplay class="camara"></video>
+          <canvas id="canvas" class="camara"></canvas> 
+        </div>
+      </div>
+    </div>
 
+    <script src="https://kit.fontawesome.com/25dd0f74cd.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.7.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script type="text/javascript">
+    
       
       var tiempoPrediccion = 3000; // 3 segundos (3000 milisegundos)
       var tamano = 400;
