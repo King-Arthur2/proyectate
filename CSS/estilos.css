@@ -76,3 +76,38 @@ body {
     margin-left: 2vh;
 }
 
+@media (max-width: 768px) {
+    #mid {
+      height: auto; 
+      width: auto; 
+    }
+    
+    #video {
+      width: 100%;
+      margin-top: 2vh;
+    }
+
+    #resultado{
+        font-family: 'Monomaniac One', sans-serif;
+        font-size: 8vh;
+        color: white;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    #oracion{
+        font-family: fantasy;
+        font-size: 30;
+        color: white;
+        margin-bottom: 5px;
+        
+    }
+    #categoria{
+        font-family: fantasy;
+        font-size: 2vh;
+        color: #F2B93C;
+        background-color: #ECF0F0;
+        width: auto;
+        text-align: center;
+    
+    }
+  }
