@@ -169,33 +169,35 @@
         setTimeout(procesarCamara, 20);
       }
 
-      function predecir() {
-        const tensorImg = tf.browser.fromPixels(video).toFloat();
-        const resizedImg = tf.image.resizeBilinear(tensorImg, [224, 224]);
-        const expandedImg = resizedImg.expandDims();
-        const normalizedImg = expandedImg.div(255.0);
+      async function predecir() {
+  tf.tidy(() => {
+    const tensorImg = tf.browser.fromPixels(video).toFloat();
+    const resizedImg = tf.image.resizeBilinear(tensorImg, [224, 224]);
+    const expandedImg = resizedImg.expandDims();
+    const normalizedImg = expandedImg.div(255.0);
 
-        const prediction = modelo.predict(normalizedImg);
-        const predictionData = prediction.dataSync();
-        const predictedClassIndex = tf.argMax(predictionData).dataSync()[0];
-        const predictedClass = labels[predictedClassIndex];
+    const prediction = modelo.predict(normalizedImg);
+    const predictionData = prediction.dataSync();
+    const predictedClassIndex = tf.argMax(predictionData).dataSync()[0];
+    const predictedClass = labels[predictedClassIndex];
 
-        const resultadoElement = document.getElementById('resultado');
-        const categoriaElement = document.getElementById('categoria');
-        const oracionElement = document.getElementById('oracion');
-        
-        if (predictedClass in categorias) {
-            resultadoElement.innerText = predictedClass;
-            categoriaElement.innerText = categorias[predictedClass].categoria
-            oracionElement.innerText = categorias[predictedClass].oracion;
-        } else {
-            resultadoElement.innerText = "No se cual es esa fruta o verdura, trata de enfocar mejor la camara";
-        }
+    const resultadoElement = document.getElementById('resultado');
+    const categoriaElement = document.getElementById('categoria');
+    const oracionElement = document.getElementById('oracion');
 
-        
-          requestAnimationFrame(predecir);
-        
+    if (predictedClass in categorias) {
+      resultadoElement.innerText = predictedClass;
+      categoriaElement.innerText = categorias[predictedClass].categoria
+      oracionElement.innerText = categorias[predictedClass].oracion;
+    } else {
+      resultadoElement.innerText = "No se cuál es esa fruta o verdura, trata de enfocar mejor la cámara.";
     }
+
+    tf.dispose([tensorImg, resizedImg, expandedImg, normalizedImg, prediction]);
+  });
+
+  requestAnimationFrame(predecir);
+}
 
       // Ejemplo de uso:
       (async () => {
